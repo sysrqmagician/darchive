@@ -1,0 +1,87 @@
+<html>
+    <head>
+        <title>{{ channel.name | escape }} - Discord Archive</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+                line-height: 1.5;
+            }
+            .channel-info {
+                border-bottom: 1px solid #ccc;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+            }
+            .message {
+                margin-bottom: 15px;
+                padding: 10px;
+                border-radius: 5px;
+                background-color: #f9f9f9;
+            }
+            .author {
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+            .timestamp {
+                color: #666;
+                font-size: 0.8em;
+                margin-left: 10px;
+            }
+            .content {
+                white-space: pre-wrap;
+            }
+            .assets {
+                margin-top: 10px;
+            }
+            .asset {
+                display: block;
+                margin: 5px 0;
+            }
+            img {
+                max-width: 100%;
+                max-height: 300px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="channel-info">
+            <h1>{{ channel.name | escape }}</h1>
+            <p>ID: {{ channel.id }}</p>
+            {% if channel.description.len() != 0 %}
+            <p>Description: {{ channel.description | escape }}</p>
+            {% endif %}
+        </div>
+
+        <div class="messages">
+            {% for message in channel.messages %}
+            <div class="message" id="message-{{ message.author_id }}">
+                <div class="author">
+                    {{ message.author_nickname | escape }} ({{
+                    message.author_username | escape }})
+                    <span class="timestamp">{{ message.timestamp }}</span>
+                </div>
+                <div class="content">{{ message.content | escape }}</div>
+                {% if message.linked_assets.len() > 0 %}
+                <div class="assets">
+                    {% for asset in message.linked_assets %}
+                    <a class="asset" href="{{ asset.path }}">
+                        {% if asset.filename.ends_with(".jpg") ||
+                        asset.filename.ends_with(".jpeg") ||
+                        asset.filename.ends_with(".png") ||
+                        asset.filename.ends_with(".gif") %}
+                        <img
+                            src="{{ asset.path }}"
+                            alt="{{ asset.filename | escape }}"
+                        />
+                        {% else %} 📎 {{ asset.filename | escape}} {% endif %}
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </body>
+</html>
